@@ -9,6 +9,11 @@ import api from "../utils/api";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import Login from "./Login";
+import Register from "./Register";
+import ProtectedRoute from "./ProtectedRoute";
+//import InfoTooltip from "./InfoTooltip";
+import { Route, Switch, Redirect } from 'react-router-dom';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -17,6 +22,8 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = React.useState([]);
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [email, setEmail] = React.useState('');
 
   React.useEffect(() => {
     Promise.all([api.getUserInfo(), api.getInitialCards()])
@@ -60,11 +67,11 @@ function App() {
 
   function handleCardDelete(card) {
     api
-    .deleteCard(card._id)
-    .then((resolve) => {
-      setCards(() => cards.filter((c) => c._id !== card._id));
-    })
-    .catch((err) => console.log(err));
+      .deleteCard(card._id)
+      .then((resolve) => {
+        setCards(() => cards.filter((c) => c._id !== card._id));
+      })
+      .catch((err) => console.log(err));
   }
 
   function handleUpdateUser(data) {
@@ -97,12 +104,44 @@ function App() {
       .catch((err) => console.log(err));
   }
 
+  function handleRegister(email, password) {
+    console.log("что-то тут должно быть");
+  } 
+
+  function handleLogin(email, password) {
+    console.log("что-то тут должно быть");
+  } 
+
+  function handleLogout() {
+    console.log("что-то тут должно быть");
+  } 
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <>
         <div className="page__container">
-          <Header />
-          <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} handleCardLike={handleCardLike} handleCardDelete={handleCardDelete} cards={cards} />
+        <Header loggedIn={loggedIn} email={email} onSignout={handleLogout} />
+            <Switch>
+            <ProtectedRoute exact
+            path="/"
+            component={Main}
+            onEditAvatar={handleEditAvatarClick} 
+            onEditProfile={handleEditProfileClick} 
+            onAddPlace={handleAddPlaceClick} 
+            onCardClick={handleCardClick}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
+            cards={cards}
+            loggedIn={loggedIn}
+          />
+          <Route path='/sign-in'>
+            <Login onLogin={handleLogin} />
+          </Route>
+              <Route path='/sign-up'>
+            <Register onRegister={handleRegister} />
+          </Route>
+              <Route> {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}</Route>
+            </Switch>
           <Footer />
         </div>
         <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
@@ -115,3 +154,4 @@ function App() {
 }
 
 export default App;
+
