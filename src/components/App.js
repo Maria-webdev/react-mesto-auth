@@ -25,7 +25,7 @@ function App() {
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [email, setEmail] = React.useState("");
-  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(true);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   const history = useHistory();
   const [isSuccess, setSuccess] = React.useState(false);
 
