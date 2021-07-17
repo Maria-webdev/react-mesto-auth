@@ -7,7 +7,7 @@ function Header(props) {
 
   return (
     <header className="header">
-      <div className="header__logo"></div>
+      <img className="header__logo" src={header__logo} alt="логотип" />
 
       {location.pathname === "/" && (
         <div className="header__logged">
@@ -32,3 +32,4 @@ function Header(props) {
 }
 
 export default Header;
+

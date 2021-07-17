@@ -25,18 +25,17 @@ function Register(props) {
         <div className="login__content">
           <h2 className="login__title">Регистрация</h2>
           <form className="login__form" name="login__form" onSubmit={handleSubmit}>
-            <input className="login__type_email" id="email" type="email" placeholder="Email" value={email} onChange={handleChange} name="email" required minLength="2" maxLength="40"/>
-            <span className="login__type_email-error" id="email-error"></span>
-            <input className="login__type_password" id="password" type="password" placeholder="Пароль" value={password} onChange={handleChange} name="password" required minLength="2" maxLength="40"/>
-            <span className="login__type_password-error" id="password-error"></span>
-            <button className="login__button " type="submit">
+            <input className="login__email" id="email" type="email" placeholder="Email" value={email} onChange={handleChange} name="email" required minLength="2" maxLength="40"/>
+            <span className="login__email-error" id="email-error"></span>
+            <input className="login__password" id="password" type="password" placeholder="Пароль" value={password} onChange={handleChange} name="password" required minLength="2" maxLength="40"/>
+            <span className="login__password-error" id="password-error"></span>
+            <button className="login__button" type="submit">
               Зарегистрироваться
             </button>
           </form>
           <div className="login__signup">
-            <p>Уже зарегистрированы? Войти</p>
             <Link to="/sign-in" className="login__link">
-              Войти
+            Уже зарегистрированы? Войти
             </Link>
           </div>
         </div>
