@@ -13,7 +13,8 @@ import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
+import * as auth from '../utils/auth';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -25,7 +26,8 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [email, setEmail] = React.useState('');
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
-  //const history = useHistory();
+  const history = useHistory();
+  const [isSuccess, setSuccess] = React.useState(false);
 
   React.useEffect(() => {
     Promise.all([api.getUserInfo(), api.getInitialCards()])
@@ -108,16 +110,41 @@ function App() {
   }
 
   function handleRegister(email, password) {
-    console.log("что-то тут должно быть");
-  } 
+    auth.register(email, password)
+      .then(() => {
+          history.push("/sign-in");
+          setSuccess(true);
+          setIsInfoTooltipOpen(true);
+      })
+      .catch((err) => {
+          console.error(err);
+          setSuccess(false);
+          setIsInfoTooltipOpen(true);
+      });
+  }
 
   function handleLogin(email, password) {
-    console.log("что-то тут должно быть");
-  } 
+    return auth
+        .authorize(email, password)
+        .then((data) => {
+            localStorage.setItem("jwt", data.token);
+            setEmail(email);
+            setLoggedIn(true);
+            history.push("/");
+        })
+        .catch((err) => {
+            console.error(err);
+            setSuccess(false);
+            setIsInfoTooltipOpen(true);
+        });
+  }
 
   function handleLogout() {
-    console.log("что-то тут должно быть");
-  } 
+    localStorage.removeItem("jwt");
+    setEmail('');
+    setLoggedIn(false);
+    history.push('/sign-in');
+  }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -140,7 +167,7 @@ function App() {
           <Route path='/sign-in'>
             <Login onLogin={handleLogin} />
           </Route>
-              <Route path='/sign-up'>
+          <Route path='/sign-up'>
             <Register onRegister={handleRegister} />
           </Route>
               <Route> {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}</Route>
@@ -151,6 +178,7 @@ function App() {
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
         <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
         <ImagePopup card={selectedCard !== null && selectedCard} onClose={closeAllPopups} />
+        <InfoTooltip isOpen={isInfoTooltipOpen} onClose={closeAllPopups} success={isSuccess} />
       </>
     </CurrentUserContext.Provider>
   );
