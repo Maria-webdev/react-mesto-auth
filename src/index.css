@@ -48,6 +48,9 @@
 @import url('./blocks/popup/__error/popup__error.css');
 @import url('./blocks/popup/__error/_visible/popup__error_visible.css');
 @import url('./blocks/popup/_visible/popup_visible.css');
+@import url('./blocks/popup/__infotooltip-pic/popup__infotooltip-pic.css');
+@import url('./blocks/popup/__infotooltip/popup__infotooltip.css');
+@import url('./blocks/popup/__infotooltip-title/popup__infotooltip-title.css');
 
 @import url('./blocks/popup-pic/popup-pic.css');
 @import url('./blocks/popup-pic/__container/popup-pic__container.css');

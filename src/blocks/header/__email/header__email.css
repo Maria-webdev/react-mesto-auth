@@ -7,5 +7,10 @@
   font-size: 18px;
   line-height: 22px;
   text-align: right;
-  color: #FFF
+  color: #FFF;
+  cursor: pointer;
+}
+
+.header__email:hover {
+  opacity: 0.6;
 }

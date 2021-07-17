@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 import "../index.css";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
 import CurrentUserContext from "../contexts/CurrentUserContext";
-import api from "../utils/api";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
@@ -13,8 +13,8 @@ import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
-import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
-import * as auth from '../utils/auth';
+import * as auth from "../utils/auth";
+import api from "../utils/api";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -24,8 +24,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [email, setEmail] = React.useState('');
-  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(true);
   const history = useHistory();
   const [isSuccess, setSuccess] = React.useState(false);
 
@@ -110,68 +110,70 @@ function App() {
   }
 
   function handleRegister(email, password) {
-    auth.register(email, password)
+    auth
+      .register(email, password)
       .then(() => {
-          history.push("/sign-in");
-          setSuccess(true);
-          setIsInfoTooltipOpen(true);
+        history.push("/sign-in");
+        setSuccess(true);
+        setIsInfoTooltipOpen(true);
       })
       .catch((err) => {
-          console.error(err);
-          setSuccess(false);
-          setIsInfoTooltipOpen(true);
+        console.error(err);
+        setSuccess(false);
+        setIsInfoTooltipOpen(true);
       });
   }
 
   function handleLogin(email, password) {
-    return auth
-        .authorize(email, password)
-        .then((data) => {
-            localStorage.setItem("jwt", data.token);
-            setEmail(email);
-            setLoggedIn(true);
-            history.push("/");
-        })
-        .catch((err) => {
-            console.error(err);
-            setSuccess(false);
-            setIsInfoTooltipOpen(true);
-        });
+    auth
+      .authorize(email, password)
+      .then((data) => {
+        localStorage.setItem("jwt", data.token);
+        setEmail(email);
+        setLoggedIn(true);
+        history.push("/");
+      })
+      .catch((err) => {
+        console.error(err);
+        setSuccess(false);
+        setIsInfoTooltipOpen(true);
+      });
   }
 
   function handleLogout() {
     localStorage.removeItem("jwt");
-    setEmail('');
+    setEmail("");
     setLoggedIn(false);
-    history.push('/sign-in');
+    history.push("/sign-in");
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <>
         <div className="page__container">
-        <Header loggedIn={loggedIn} email={email} onSignout={handleLogout} />
-            <Switch>
-            <ProtectedRoute exact
-            path="/"
-            component={Main}
-            onEditAvatar={handleEditAvatarClick} 
-            onEditProfile={handleEditProfileClick} 
-            onAddPlace={handleAddPlaceClick} 
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-            cards={cards}
-            loggedIn={loggedIn}
-          />
-          <Route path='/sign-in'>
-            <Login onLogin={handleLogin} />
-          </Route>
-          <Route path='/sign-up'>
-            <Register onRegister={handleRegister} />
-          </Route>
-              <Route> {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}</Route>
-            </Switch>
+          <Header loggedIn={loggedIn} email={email} onSignout={handleLogout} />
+          <Switch>
+            <ProtectedRoute
+              exact
+              path="/"
+              component={Main}
+              onEditAvatar={handleEditAvatarClick}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onCardClick={handleCardClick}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+              cards={cards}
+              loggedIn={loggedIn}
+            />
+            <Route path="/sign-in">
+              <Login onLogin={handleLogin} />
+            </Route>
+            <Route path="/sign-up">
+              <Register onRegister={handleRegister} />
+            </Route>
+            <Route> {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}</Route>
+          </Switch>
           <Footer />
         </div>
         <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
@@ -185,4 +187,3 @@ function App() {
 }
 
 export default App;
-

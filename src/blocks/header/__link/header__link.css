@@ -6,6 +6,7 @@
   text-align: right;
   color: #fff;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .header__link:hover {
