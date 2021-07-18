@@ -30,6 +30,7 @@ function App() {
   const [isSuccess, setSuccess] = React.useState(false);
 
   React.useEffect(() => {
+    checkToken();
     Promise.all([api.getUserInfo(), api.getInitialCards()])
       .then((result) => {
         setCurrentUser(result[0]);
@@ -145,6 +146,29 @@ function App() {
     setEmail("");
     setLoggedIn(false);
     history.push("/sign-in");
+  }
+
+  function checkToken() {
+    const localToken = localStorage.getItem("jwt");
+    if (localToken) {
+      auth
+      .checkToken(localToken)
+      .then((data) => {
+        if (data) {
+          setLoggedIn(true);
+          setEmail(data.data.email);
+          history.push("/");
+        } else {
+          setSuccess(false);
+          setIsInfoTooltipOpen(true);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setSuccess(false);
+        setIsInfoTooltipOpen(true);
+      })
+    }
   }
 
   return (
